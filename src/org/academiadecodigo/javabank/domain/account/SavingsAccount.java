@@ -12,7 +12,6 @@ public class SavingsAccount extends Account {
      * The minimum balance to maintain on the account
      */
     private static final double MIN_BALANCE = 100;
-
     /**
      * Creates a new {@code SavingsAccount} instance
      *

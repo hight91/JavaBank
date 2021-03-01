@@ -5,6 +5,7 @@ package org.academiadecodigo.javabank.domain.account;
  */
 public abstract class Account {
 
+
     private int id;
     private double balance = 0;
 
@@ -15,6 +16,7 @@ public abstract class Account {
      */
     public Account(int id) {
         this.id = id;
+
     }
 
     /**
