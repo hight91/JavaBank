@@ -1,5 +1,7 @@
 package org.academiadecodigo.javabank.domain.account;
 
+import org.academiadecodigo.javabank.domain.account.newWay.doesWidthdraw;
+
 /**
  * A generic account domain entity to be used as a base for concrete types of accounts
  */
@@ -8,6 +10,7 @@ public abstract class Account {
 
     private int id;
     private double balance = 0;
+    public doesWidthdraw widthdrawType;
 
     /**
      * Initializes a new {@code Account} instance with an id
