@@ -63,4 +63,11 @@ public class Customer {
         return balance;
     }
 
+    public Map<Integer, Account> getAccounts() {
+        return accounts;
+    }
+
+    public AccountManager getAccountManager() {
+        return accountManager;
+    }
 }
