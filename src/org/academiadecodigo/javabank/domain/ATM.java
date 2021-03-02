@@ -4,7 +4,6 @@ import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.bootcamp.scanners.precisiondouble.DoubleInputScanner;
 import org.academiadecodigo.javabank.domain.account.Account;
-import org.academiadecodigo.javabank.domain.;
 import org.academiadecodigo.javabank.domain.account.AccountType;
 
 public class ATM {
