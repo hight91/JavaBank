@@ -1,7 +1,5 @@
 package org.academiadecodigo.javabank.application;
 
-import org.academiadecodigo.bootcamp.Prompt;
-import org.academiadecodigo.bootcamp.scanners.integer.IntegerSetInputScanner;
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.javabank.application.operations.BalanceOperation;
 import org.academiadecodigo.javabank.application.operations.NewAccountOperation;
@@ -10,6 +8,7 @@ import org.academiadecodigo.javabank.application.operations.transaction.DepositO
 import org.academiadecodigo.javabank.application.operations.transaction.WithdrawOperation;
 import org.academiadecodigo.javabank.domain.Bank;
 import org.academiadecodigo.javabank.views.InsertIdView;
+import org.academiadecodigo.javabank.views.OptionsMenuView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,7 @@ import java.util.Map;
  */
 public class BankApplication {
 
-    private Prompt prompt;
+
     private MenuInputScanner mainMenu;
     private Map<Integer, Operation> operationsMap;
 
@@ -29,7 +28,7 @@ public class BankApplication {
 
     /** VIEWS */
     private InsertIdView idView;
-
+    private OptionsMenuView menuView;
 
     /**
      * Creates a new instance of a {@code BankApplication}, initializes it with the given {@link Bank}
@@ -38,20 +37,11 @@ public class BankApplication {
      */
     public BankApplication(Bank bank) {
         this.bank = bank;
-        this.prompt = new Prompt(System.in, System.out);
 
         idView = new InsertIdView();
+        menuView = new OptionsMenuView();
 
 
-    }
-
-    /**
-     * Gets the prompt used for the UI
-     *
-     * @return the prompt
-     */
-    public Prompt getPrompt() {
-        return prompt;
     }
 
     /**
@@ -78,15 +68,14 @@ public class BankApplication {
     public void start() {
 
         mainMenu = buildMainMenu();
-
         accessingCustomerId = scanCustomerId();
         operationsMap = buildOperationsMap();
         menuLoop();
     }
 
-    private void menuLoop() {
+    private void menuLoop(){
 
-        int userChoice = prompt.getUserInput(mainMenu);
+        int userChoice = menuView.getUserOption(mainMenu);
 
         if (userChoice == UserOptions.QUIT.getOption()) {
             return;
@@ -101,12 +90,7 @@ public class BankApplication {
     }
 
     private MenuInputScanner buildMainMenu() {
-
-        MenuInputScanner mainMenu = new MenuInputScanner(UserOptions.getMessages());
-        mainMenu.setError(Messages.ERROR_INVALID_OPTION);
-        mainMenu.setMessage(Messages.MENU_WELCOME);
-
-        return mainMenu;
+        return menuView.sendOptionsMenu();
     }
 
     private Map<Integer, Operation> buildOperationsMap() {
