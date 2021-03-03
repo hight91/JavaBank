@@ -9,6 +9,7 @@ import org.academiadecodigo.javabank.application.operations.Operation;
 import org.academiadecodigo.javabank.application.operations.transaction.DepositOperation;
 import org.academiadecodigo.javabank.application.operations.transaction.WithdrawOperation;
 import org.academiadecodigo.javabank.domain.Bank;
+import org.academiadecodigo.javabank.views.InsertIdView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,11 @@ public class BankApplication {
     private Bank bank;
     private int accessingCustomerId;
 
+
+    /** VIEWS */
+    private InsertIdView idView;
+
+
     /**
      * Creates a new instance of a {@code BankApplication}, initializes it with the given {@link Bank}
      *
@@ -33,6 +39,10 @@ public class BankApplication {
     public BankApplication(Bank bank) {
         this.bank = bank;
         this.prompt = new Prompt(System.in, System.out);
+
+        idView = new InsertIdView();
+
+
     }
 
     /**
@@ -87,12 +97,7 @@ public class BankApplication {
     }
 
     private int scanCustomerId() {
-
-        IntegerSetInputScanner scanner = new IntegerSetInputScanner(bank.getCustomerIds());
-        scanner.setMessage(Messages.CHOOSE_CUSTOMER);
-        scanner.setError(Messages.ERROR_INVALID_CUSTOMER);
-
-        return prompt.getUserInput(scanner);
+        return idView.inputMessage(bank);
     }
 
     private MenuInputScanner buildMainMenu() {
