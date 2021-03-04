@@ -5,6 +5,7 @@ import org.academiadecodigo.javabank.model.Bank;
 import org.academiadecodigo.javabank.model.Customer;
 import org.academiadecodigo.javabank.model.account.Account;
 import org.academiadecodigo.javabank.model.account.AccountType;
+import org.academiadecodigo.javabank.services.CustomerServices;
 
 public class BankTest {
 
@@ -25,11 +26,15 @@ public class BankTest {
         c1.addAccount(a1);
         c2.addAccount(a2);
 
+        CustomerServices customerServices = new CustomerServices(c1,bank);
+
+
+
         accountManager.deposit(a1.getId(), 100);
         accountManager.deposit(a2.getId(), 100);
 
         // bank balance should equal sum of all customers balance
-        if (bank.getBalance() != 200) {
+        if (customerServices.getBalance(c1.getId()) != 200) {
             return false;
         }
 
