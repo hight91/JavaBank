@@ -17,8 +17,10 @@ public class BankTest {
 
         Customer c1 = new Customer(1, "Rui");
         Customer c2 = new Customer(2, "Sergio");
-        bank.addCustomer(c1);
-        bank.addCustomer(c2);
+        CustomerServices customerServices1 = new CustomerServices(bank, accountManager);
+        CustomerServices customerServices2 = new CustomerServices(bank, accountManager);
+        customerServices1.add(c1);
+        customerServices2.add(c2);
 
         Account a1 = accountManager.openAccount(AccountType.CHECKING);
         Account a2 = accountManager.openAccount(AccountType.CHECKING);
@@ -26,7 +28,7 @@ public class BankTest {
         c1.addAccount(a1);
         c2.addAccount(a2);
 
-        CustomerServices customerServices = new CustomerServices(c1,bank);
+        CustomerServices customerServices = new CustomerServices(bank, accountManager);
 
 
 

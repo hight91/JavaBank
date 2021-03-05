@@ -1,5 +1,6 @@
 package org.academiadecodigo.javabank.services;
 
+import org.academiadecodigo.javabank.managers.AccountManager;
 import org.academiadecodigo.javabank.model.Bank;
 import org.academiadecodigo.javabank.model.Customer;
 
@@ -8,10 +9,12 @@ import java.util.Set;
 
 public class CustomerServices implements CustomerService{
     private Bank bank;
+    private AccountManager accountManager;
 
 
-    public CustomerServices(Customer customer, Bank bank) {
+    public CustomerServices(Bank bank, AccountManager accountManager) {
         this.bank = bank;
+        this.accountManager = accountManager;
     }
 
     /**
@@ -40,8 +43,8 @@ public class CustomerServices implements CustomerService{
      * @return customer ids
      */
     @Override
-    public Set<Integer> listCustomerAccountIds(Integer id) {
-        return bank.getCustomers().keySet();
+    public Set<Integer> listCustomerAccountIds() {
+        return  bank.getCustomerIds();
     }
 
     /**
@@ -71,4 +74,18 @@ public class CustomerServices implements CustomerService{
     public void add(Customer customer) {
         bank.getCustomers().put(customer.getId(), customer);
     }
+
+    /**
+     * Gets the Customer id of the Customer
+     *
+     *
+     * @return customerID
+     */
+    public Integer getId(){
+       return bank.getLoginCustomer().getId();
+    }
+
+
+
+
 }

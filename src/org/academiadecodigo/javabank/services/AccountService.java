@@ -1,4 +1,4 @@
-package org.academiadecodigo.javabank.services.accountsServices;
+package org.academiadecodigo.javabank.services;
 
 import org.academiadecodigo.javabank.model.account.Account;
 

@@ -22,23 +22,6 @@ public class Bank {
         this.customers = new HashMap<>();
     }
 
-   /*
-    /**
-     * Gets the total balance of the bank
-     *
-     * @return the bank total balance
-
-    public double getBalance() {
-
-        double balance = 0;
-
-        for (Customer customer : customers.values()) {
-            balance += customer.getBalance();
-        }
-
-        return balance;
-    }*/
-
     /**
      * Gets the account manager
      *
@@ -58,20 +41,14 @@ public class Bank {
     }
 
 
-/*    *//**
+    /**
      * Gets the ids of the bank customers
      *
      * @return customer ids
-     *//*
-    public Set<Integer> getCustomerIds() {
-        return customers.keySet();
-    }*/
-
-    /**
-     * Gets the logged in customer
-     *
-     * @return the customer
      */
+
+
+
     public Customer getLoginCustomer() {
         return customers.get(loginCustomer);
     }
@@ -85,17 +62,11 @@ public class Bank {
         this.loginCustomer = id;
     }
 
- /*  /**
-     * Adds a new customer to the bank
-     *
-     * @param customer the new bank customer
-     *//*
-    public void addCustomer(Customer customer) {
-        customers.put(customer.getId(), customer);
-    }*/
-
     public HashMap<Integer, Customer> getCustomers() {
         return customers;
+    }
+    public Set<Integer> getCustomerIds(){
+        return customers.keySet();
     }
 
 }

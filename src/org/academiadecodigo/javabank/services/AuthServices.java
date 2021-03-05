@@ -17,22 +17,14 @@ public class AuthServices implements AuthService{
      */
     @Override
     public boolean authenticate(Integer id) {
-        if(bank.getCustomers().containsKey(id)){
-            bank.setLoginCustomer(id);
-            return true;
+        bank.setLoginCustomer(id);
+        return bank.getCustomers().containsKey(id);
+
         }
-  else{
-        return true;
-    }}
 
     @Override
     public Customer getAccessingCustomer() {
         return bank.getLoginCustomer();
     }
-
-
-
-
-
 
 }

@@ -2,6 +2,9 @@ package org.academiadecodigo.javabank.view;
 
 import org.academiadecodigo.bootcamp.scanners.integer.IntegerSetInputScanner;
 import org.academiadecodigo.javabank.controller.LoginController;
+import org.academiadecodigo.javabank.model.Bank;
+import org.academiadecodigo.javabank.model.Customer;
+import org.academiadecodigo.javabank.services.CustomerServices;
 
 /**
  * A view shown at login
@@ -11,7 +14,6 @@ import org.academiadecodigo.javabank.controller.LoginController;
 public class LoginView extends AbstractView {
 
     private LoginController loginController;
-
     /**
      * Sets the controller responsible for rendering the view
      *
@@ -36,7 +38,7 @@ public class LoginView extends AbstractView {
 
     private void showLoginPrompt() {
 
-        IntegerSetInputScanner scanner = new IntegerSetInputScanner(bank.getCustomerIds());
+        IntegerSetInputScanner scanner = new IntegerSetInputScanner(loginController.listCustomerAccountIds());
         scanner.setMessage("\n" + Messages.VIEW_LOGIN_MESSAGE);
         scanner.setError(Messages.VIEW_LOGIN_ERROR);
         loginController.onLogin(prompt.getUserInput(scanner));

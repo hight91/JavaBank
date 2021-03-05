@@ -3,14 +3,16 @@ package org.academiadecodigo.javabank.managers;
 import org.academiadecodigo.javabank.factories.AccountFactory;
 import org.academiadecodigo.javabank.model.account.Account;
 import org.academiadecodigo.javabank.model.account.AccountType;
+import org.academiadecodigo.javabank.services.AccountService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsible for managing accounts
  */
-public class AccountManager {
+public class AccountManager implements AccountService {
 
     private AccountFactory accountFactory = new AccountFactory();
     private Map<Integer, Account> accountMap;
@@ -33,6 +35,11 @@ public class AccountManager {
         Account newAccount = accountFactory.createAccount(accountType);
         accountMap.put(newAccount.getId(), newAccount);
         return newAccount;
+    }
+
+    @Override
+    public void add(Account account) {
+        accountMap.put(account.getId(), account);
     }
 
     /**
@@ -80,4 +87,13 @@ public class AccountManager {
             dstAccount.credit(amount);
         }
     }
+
+    public AccountFactory getAccountFactory() {
+        return accountFactory;
+    }
+
+    public Set<Integer> getAccountIds() {
+        return accountMap.keySet();
+    }
+
 }

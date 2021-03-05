@@ -1,6 +1,7 @@
 package org.academiadecodigo.javabank.view;
 
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
+import org.academiadecodigo.javabank.controller.LoginController;
 import org.academiadecodigo.javabank.controller.MainController;
 
 /**
@@ -11,6 +12,7 @@ import org.academiadecodigo.javabank.controller.MainController;
 public class MainView extends AbstractView {
 
     private MainController mainController;
+    private LoginController loginController;
 
     /**
      * Sets the controller responsible for rendering the view
@@ -19,6 +21,10 @@ public class MainView extends AbstractView {
      */
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
+    }
+
+    public void setLoginController(LoginController loginController) {
+        this.loginController = loginController;
     }
 
     /**
@@ -33,7 +39,9 @@ public class MainView extends AbstractView {
 
         MenuInputScanner scanner = new MenuInputScanner(UserOptions.getMessages());
         scanner.setError(Messages.VIEW_MAIN_ERROR);
-        scanner.setMessage("\n" + Messages.VIEW_MAIN_MESSAGE + bank.getLoginCustomer().getName());
+        scanner.setMessage("\n" + Messages.VIEW_MAIN_MESSAGE + loginController.getBank().getLoginCustomer().getName());
         mainController.onMenuSelection(prompt.getUserInput(scanner));
     }
+
+
 }
