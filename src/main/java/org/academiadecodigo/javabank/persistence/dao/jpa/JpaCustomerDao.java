@@ -9,8 +9,8 @@ public class JpaCustomerDao extends AbstractDAO<Customer> {
 
     JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 
-    public JpaCustomerDao(EntityManagerFactory emf, Class<Customer> modelType) {
-        super(emf, Customer.class);
+    public JpaCustomerDao(EntityManagerFactory emf) {
+        super(Customer.class);
     }
 
     public Customer findByUsername(String username) {

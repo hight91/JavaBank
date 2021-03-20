@@ -41,8 +41,8 @@ public class App {
         JpaCustomerService jpaCustomerService = new JpaCustomerService();
         JpaAccountService jpaAccountService = new JpaAccountService();
 
-        JpaAccountDao jpaAccountDao = new JpaAccountDao(emf, AbstractAccount.class);
-        JpaCustomerDao jpaCustomerDao = new JpaCustomerDao(emf, Customer.class);
+        JpaAccountDao jpaAccountDao = new JpaAccountDao(emf);
+        JpaCustomerDao jpaCustomerDao = new JpaCustomerDao(emf);
 
         jpaAccountDao.setJpaTransactionManager(jpaTransactionManager);
         jpaCustomerDao.setJpaTransactionManager(jpaTransactionManager);

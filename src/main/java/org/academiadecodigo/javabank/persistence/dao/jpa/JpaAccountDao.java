@@ -7,8 +7,8 @@ import javax.persistence.EntityManagerFactory;
 
 public class JpaAccountDao extends AbstractDAO<AbstractAccount> {
 
-    public JpaAccountDao(EntityManagerFactory emf, Class<AbstractAccount> abstractAccountClass) {
-        super(emf, AbstractAccount.class);
+    public JpaAccountDao(EntityManagerFactory emf) {
+        super(AbstractAccount.class);
     }
 
 }

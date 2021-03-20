@@ -19,8 +19,7 @@ public abstract class AbstractDAO<T extends Model> implements DAO<T> {
     private  JpaTransactionManager jpaTransactionManager;
 
 
-    public AbstractDAO(EntityManagerFactory emf, Class<T> modelType) {
-        this.emf = emf;
+    public AbstractDAO(Class<T> modelType) {
         this.modelType = modelType;
     }
 

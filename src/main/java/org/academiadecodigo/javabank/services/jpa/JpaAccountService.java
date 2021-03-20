@@ -26,12 +26,14 @@ public class JpaAccountService implements AccountService {
 
         try {
             Optional<Account> account = Optional.ofNullable(jpaAccountDao.findById(id));
-            System.out.println(account);
+            System.out.println("axxount: "+account);
             if (!account.isPresent()) {
                 jpaAccountDao.getJpaTransactionManager().rollback();
             }
+            System.out.println("account: "+account);
 
             account.orElseThrow(() -> new IllegalArgumentException("invalid account id")).credit(amount);
+            save(account.get());
 
         } catch (RollbackException ex) {
 
@@ -55,6 +57,8 @@ public class JpaAccountService implements AccountService {
             }
 
             account.orElseThrow(() -> new IllegalArgumentException("invalid account id")).debit(amount);
+            save(account.get());
+
 
 
         } catch (RollbackException ex) {
