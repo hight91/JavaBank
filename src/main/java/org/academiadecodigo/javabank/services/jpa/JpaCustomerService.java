@@ -3,7 +3,9 @@ package org.academiadecodigo.javabank.services.jpa;
 import org.academiadecodigo.javabank.model.Customer;
 import org.academiadecodigo.javabank.model.Model;
 import org.academiadecodigo.javabank.model.account.Account;
+import org.academiadecodigo.javabank.persistence.dao.jpa.JpaCustomerDao;
 import org.academiadecodigo.javabank.services.CustomerService;
+import org.academiadecodigo.javabank.session.AbstractDAO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,14 +16,10 @@ import java.util.stream.Collectors;
 /**
  * A JPA {@link CustomerService} implementation
  */
-public class JpaCustomerService extends AbstractJpaService<Customer> implements CustomerService {
+public class JpaCustomerService implements CustomerService {
 
-    /**
-     * @see AbstractJpaService#AbstractJpaService(EntityManagerFactory, Class)
-     */
-    public JpaCustomerService(EntityManagerFactory emf) {
-        super(emf, Customer.class);
-    }
+    private JpaCustomerDao jpaCustomerDao;
+
 
     /**
      * @see CustomerService#getBalance(Integer)
@@ -29,22 +27,10 @@ public class JpaCustomerService extends AbstractJpaService<Customer> implements 
     @Override
     public double getBalance(Integer id) {
 
-        EntityManager em = emf.createEntityManager();
-
-        try {
-
-            Customer customer = Optional.ofNullable(em.find(Customer.class, id))
-                .orElseThrow(() -> new IllegalArgumentException("Customer does not exist"));
+           Customer customer =  Optional.ofNullable((jpaCustomerDao).findById(id)).orElseThrow(() -> new IllegalArgumentException("Customer does not exist"));
 
             return customer.getAccounts().stream()
-                    .mapToDouble(Account::getBalance)
-                    .sum();
-
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
+                    .mapToDouble(Account::getBalance).sum();
     }
 
     /**
@@ -53,22 +39,16 @@ public class JpaCustomerService extends AbstractJpaService<Customer> implements 
     @Override
     public Set<Integer> listCustomerAccountIds(Integer id) {
 
-        EntityManager em = emf.createEntityManager();
-
-        try {
-
-            Customer customer = Optional.ofNullable(em.find(Customer.class, id))
+            Customer customer = Optional.ofNullable((jpaCustomerDao).findById(id))
                     .orElseThrow(() -> new IllegalArgumentException("Customer does not exist"));
 
             return customer.getAccounts().stream()
                     .map(Model::getId)
                     .collect(Collectors.toSet());
 
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
+    }
 
+    public void setJpaCustomerDao(JpaCustomerDao jpaCustomerDao) {
+        this.jpaCustomerDao = jpaCustomerDao;
     }
 }

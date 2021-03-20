@@ -5,7 +5,7 @@ import org.academiadecodigo.javabank.model.account.Account;
 /**
  * Common interface for account services, provides methods to manage accounts and perform account transactions
  */
-public interface AccountService extends CRUDService<Account> {
+public interface AccountService{
 
     /**
      * Perform an {@link Account} deposit
@@ -31,5 +31,7 @@ public interface AccountService extends CRUDService<Account> {
      * @param amount the amount to transfer
      */
     void transfer(Integer srcId, Integer dstId, double amount);
+
+    Account save(Account account);
 
 }

@@ -18,6 +18,8 @@ public class JpaBootstrap {
 
             emf = Persistence.createEntityManagerFactory(Config.PERSISTENCE_UNIT);
 
+
+
             isH2 = emf.getProperties().get("hibernate.connection.driver_class").equals("org.h2.Driver");
 
             if (isH2) {
