@@ -1,4 +1,4 @@
-package org.academiadecodigo.javabank.session;
+package org.academiadecodigo.javabank.persistence.dao.jpa;
 
 import org.academiadecodigo.javabank.model.Model;
 import org.h2.engine.User;

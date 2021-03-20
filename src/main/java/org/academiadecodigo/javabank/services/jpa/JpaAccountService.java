@@ -25,8 +25,8 @@ public class JpaAccountService implements AccountService {
 
 
         try {
-            Optional<Account> account = Optional.ofNullable((jpaAccountDao).findById(id));
-
+            Optional<Account> account = Optional.ofNullable(jpaAccountDao.findById(id));
+            System.out.println(account);
             if (!account.isPresent()) {
                 jpaAccountDao.getJpaTransactionManager().rollback();
             }
@@ -96,8 +96,8 @@ public class JpaAccountService implements AccountService {
 
     @Override
     public Account save(Account account) {
-            jpaAccountDao.saveOrUpdate(account);
-        return account;
+        return jpaAccountDao.saveOrUpdate((AbstractAccount) account);
+
     }
 
     public void setJpaAccountDao(JpaAccountDao jpaAccountDao) {

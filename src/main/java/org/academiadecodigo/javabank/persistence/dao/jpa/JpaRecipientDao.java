@@ -1,8 +1,6 @@
 package org.academiadecodigo.javabank.persistence.dao.jpa;
 
 import org.academiadecodigo.javabank.model.Model;
-import org.academiadecodigo.javabank.session.DAO;
-import org.h2.engine.User;
 
 import java.util.List;
 

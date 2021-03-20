@@ -1,10 +1,8 @@
-package org.academiadecodigo.javabank.session;
+package org.academiadecodigo.javabank.persistence.dao.jpa;
 
-import org.academiadecodigo.javabank.model.Customer;
+import org.academiadecodigo.javabank.model.AbstractModel;
 import org.academiadecodigo.javabank.model.Model;
 import org.academiadecodigo.javabank.persistence.jpa.JpaTransactionManager;
-import org.academiadecodigo.javabank.services.CRUDService;
-import org.h2.engine.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -46,11 +44,12 @@ public abstract class AbstractDAO<T extends Model> implements DAO<T> {
 
     @Override
     public T findById(Integer id) {
+        EntityManager entityManager = jpaTransactionManager.getEm();
         try {
             jpaTransactionManager.beginRead();
-            EntityManager entityManager = jpaTransactionManager.getEm();
-          //1  System.out.println(entityManager);
-            return  entityManager.find(modelType, id);
+
+           T find =  entityManager.find(modelType,id);
+            return find;
         }finally {
             jpaTransactionManager.commit();
         }
@@ -58,14 +57,12 @@ public abstract class AbstractDAO<T extends Model> implements DAO<T> {
 
     @Override
     public T saveOrUpdate(T entity) {
+
         EntityManager em = jpaTransactionManager.getEm();
-        jpaTransactionManager.beginRead();
         try {
             jpaTransactionManager.beginWrite();
-            em.merge(entity);
-            entity.getId();
-            System.out.println(entity.getId());
-            return findById(entity.getId());
+            T newEntity  = em.merge(entity);
+            return newEntity;
         } catch (RollbackException ex) {
 
             em.getTransaction().rollback();

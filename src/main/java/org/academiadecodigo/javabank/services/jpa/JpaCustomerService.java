@@ -5,10 +5,7 @@ import org.academiadecodigo.javabank.model.Model;
 import org.academiadecodigo.javabank.model.account.Account;
 import org.academiadecodigo.javabank.persistence.dao.jpa.JpaCustomerDao;
 import org.academiadecodigo.javabank.services.CustomerService;
-import org.academiadecodigo.javabank.session.AbstractDAO;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
