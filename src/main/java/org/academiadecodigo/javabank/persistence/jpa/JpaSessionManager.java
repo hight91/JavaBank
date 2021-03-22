@@ -22,6 +22,9 @@ public class JpaSessionManager implements SessionManager<EntityManager> {
         this.emf = emf;
     }
 
+    public JpaSessionManager(){
+
+    }
     /**
      * @see SessionManager#startSession()
      */

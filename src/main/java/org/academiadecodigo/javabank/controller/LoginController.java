@@ -10,6 +10,9 @@ public class LoginController extends AbstractController {
     private Controller nextController;
     private boolean authFailed = false;
 
+    public LoginController() {
+    }
+
     /**
      * Sets the next controller
      *
@@ -44,9 +47,6 @@ public class LoginController extends AbstractController {
         return authFailed;
     }
 
-    public void setAuthFailed(boolean authFailed) {
-        this.authFailed = authFailed;
-    }
 
 
 }

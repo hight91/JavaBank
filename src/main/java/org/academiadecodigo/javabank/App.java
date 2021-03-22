@@ -12,11 +12,11 @@ public class App {
     public static void main(String[] args) {
 
         ApplicationContext ac = new FileSystemXmlApplicationContext(
-                new String[] {"src/main/resources/META-INF/springconfig.xml"}
-        );
+               "src/main/resources/META-INF/springconfig.xml");
+
 
     // retrieve configured instance
-        LoginController controller = ac.getBean("loginController", LoginController.class);
+        Controller controller = ac.getBean("loginController", LoginController.class);
         controller.init();
     }
 
