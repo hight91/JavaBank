@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+        <util:constant id="stdin" static-field="java.lang.System.in"/>
+        <util:constant id="stdout" static-field="java.lang.System.out"/>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!-- c3p0 database connection pool management -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/javabank?useSSL=false"/>
+        <property name="user" value="root"/>
+        <property name="password" value="User12345!"/>
+
+        <!-- c3p0 database connection pool management properties -->
+        <property name="minPoolSize" value="1"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="acquireIncrement" value="1"/>
+        <property name="maxStatements" value="0"/>
+
+        <!-- destroy idle pool after 300ms -->
+        <property name="idleConnectionTestPeriod" value="300"/>
+
+        <!-- destroy db connection if it fails to login after 7200ms -->
+        <property name="loginTimeout" value="7200"/>
+
+    </bean>
+
+    <!-- spring jpa entity manager factory configuration -->
+    <bean id="emFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="org.academiadecodigo.javabank.model"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <map>
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+                <entry key="hibernate.show_sql" value="false" />
+                <!-- WARNING: Will re-create the database schema, causing data loss -->
+                <entry key="hibernate.hbm2ddl.auto" value="create"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="loginController" class="org.academiadecodigo.javabank.controller.LoginController">
+
+        <property name="nextController" ref="mainController"/>
+        <property name="authFailed" value="false"/>
+        <property name="view" value="loginView"/>
+        <property name="authService" ref="authService"/>
+
+
+    </bean>
+    <bean id="mainController" class="org.academiadecodigo.javabank.controller.MainController">
+        <property name="controllerMap">
+            <map key-type="org.academiadecodigo.javabank.view.UserOptions">
+                <entry key="GET_BALANCE" value-ref="balanceController"/>
+                <entry key="DEPOSIT" value-ref="depositController"/>
+                <entry key="OPEN_ACCOUNT" value-ref="newAccountController"/>
+                <entry key="WITHDRAW" value-ref="withdrawController"/>
+            </map>
+        </property>
+        <property name="authService" ref="authService"/>
+        <property name="view" ref="mainView"/>
+    </bean>
+    
+    <bean id="authService" class="org.academiadecodigo.javabank.services.AuthServiceImpl">
+        <property name="customerService" ref="customerService"/>
+    </bean>
+    
+    <bean id="customerDao" class="org.academiadecodigo.javabank.persistence.dao.jpa.JpaCustomerDao">
+        <constructor-arg name="sm" ref="jpasessionmanager"/>
+    </bean>
+
+    <bean id="balanceController" class="org.academiadecodigo.javabank.controller.BalanceController">
+        <property name="customerService" ref="customerService"/>
+        <property name="authService" ref="authService"/>
+        <property name="view" ref="balanceView"/>
+    </bean>
+
+    <bean id="customerService" class="org.academiadecodigo.javabank.services.CustomerServiceImpl">
+        <property name="customerDao" ref="customerDao"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="jpasessionmanager"/>
+    
+    <bean id="depositController" class="org.academiadecodigo.javabank.controller.transaction.DepositController">
+        <property name="authService" ref="authService"/>
+        <property name="view" ref="depositView"/>
+        <property name="accountService" ref="accountService"/>
+        <property name="customerService" ref="customerService"/>
+    </bean>
+
+    <bean id="newAccountController" class="org.academiadecodigo.javabank.controller.NewAccountController">
+        
+        <property name="accountFactory" ref="accountFactory"/>
+        <property name="accountService" ref="AccountService"/>
+        <property name="authService" ref="authService"/>
+        <property name="view" ref="newAccountView"/>
+    </bean>
+    <bean id="accountFactory" class="org.academiadecodigo.javabank.factories.AccountFactory"/>
+    <bean id="AccountService" class="org.academiadecodigo.javabank.services.AccountServiceImpl">
+
+        <property name="accountDao" ref="accountDao"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    <bean id="accountDao" class="org.academiadecodigo.javabank.persistence.dao.jpa.JpaAccountDao">
+        <constructor-arg name="sm" ref="jpasessionmanager"/>
+    </bean>
+    <bean id="transactionManager" class="org.academiadecodigo.javabank.persistence.jpa.JpaTransactionManager">
+        <constructor-arg name="sm" ref="jpasessionmanager"/>
+    </bean>
+    <bean id="withdrawController" class="org.academiadecodigo.javabank.controller.transaction.WithdrawalController">
+        <property name="authService" ref="authService"/>
+        <property name="view" ref="withdrawView"/>
+        <property name="accountService" ref="accountService"/>
+        <property name="customerService" ref="customerService"/>
+    </bean>
+    <bean id="loginView"/>
+    <bean id="mainView" class="org.academiadecodigo.javabank.view.MainView">
+
+        <property name="prompt" ref="prompt"/>
+        <property name="mainController" ref="mainController"/>
+    </bean>
+    <bean id="balanceView" class="org.academiadecodigo.javabank.view.BalanceView">
+        <property name="balanceController" ref="balanceController"/>
+    </bean>
+    <bean id="depositView" class="org.academiadecodigo.javabank.view.AccountTransactionView">
+        <property name="prompt" ref="prompt"/>
+        <property name="transactionController" ref="depositController"/>
+    </bean>
+    <bean id="accountService" class="org.academiadecodigo.javabank.services.AccountServiceImpl">
+        <property name="accountDao" ref="accountDao"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+    <bean id="newAccountView" class="org.academiadecodigo.javabank.view.NewAccountView">
+        <property name="newAccountController" ref="newAccountController"/>
+    </bean>
+    <bean id="withdrawView" class="org.academiadecodigo.javabank.view.AccountTransactionView">
+        <property name="prompt" ref="prompt"/>
+        <property name="transactionController" ref="withdrawController"/>
+    </bean>
+    <bean id="prompt" class="org.academiadecodigo.bootcamp.Prompt">
+        <constructor-arg name="input" ref="stdin"/>
+        <constructor-arg name="output" ref="stdout"/>
+    </bean>
+
+</beans>
+

@@ -43,4 +43,10 @@ public class LoginController extends AbstractController {
     public boolean isAuthFailed() {
         return authFailed;
     }
+
+    public void setAuthFailed(boolean authFailed) {
+        this.authFailed = authFailed;
+    }
+
+
 }
