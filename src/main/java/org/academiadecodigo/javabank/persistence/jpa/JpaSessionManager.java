@@ -27,7 +27,10 @@ public class JpaSessionManager implements SessionManager {
         }
 
         public EntityManager getCurrentSession() {
-            startSession();
+
+            if(em == null) {
+                startSession();
+            }
             return em;
         }
 

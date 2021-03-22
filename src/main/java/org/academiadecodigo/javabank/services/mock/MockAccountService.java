@@ -1,6 +1,8 @@
 package org.academiadecodigo.javabank.services.mock;
 
+import org.academiadecodigo.javabank.model.account.AbstractAccount;
 import org.academiadecodigo.javabank.model.account.Account;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 import org.academiadecodigo.javabank.services.AccountService;
 
 /**
@@ -42,5 +44,10 @@ public class MockAccountService extends AbstractMockService<Account> implements 
             srcAccount.debit(amount);
             dstAccount.credit(amount);
         }
+    }
+
+    @Override
+    public void setAccountDAO(DAO<AbstractAccount> accountDAO) {
+
     }
 }

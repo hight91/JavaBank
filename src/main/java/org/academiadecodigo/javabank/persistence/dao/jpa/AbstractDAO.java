@@ -1,11 +1,9 @@
 package org.academiadecodigo.javabank.persistence.dao.jpa;
 
-import org.academiadecodigo.javabank.model.AbstractModel;
 import org.academiadecodigo.javabank.model.Model;
-import org.academiadecodigo.javabank.persistence.jpa.JpaTransactionManager;
+import org.academiadecodigo.javabank.session.TransactionManager;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.RollbackException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -13,63 +11,54 @@ import java.util.List;
 
 public abstract class AbstractDAO<T extends Model> implements DAO<T> {
 
-
-    private EntityManagerFactory emf;
     private Class<T> modelType;
-    private  JpaTransactionManager jpaTransactionManager;
+    private TransactionManager transactionManager;
 
+    public AbstractDAO(Class<T> modelType, TransactionManager transactionManager) {
 
-    public AbstractDAO(Class<T> modelType) {
+        this.transactionManager = transactionManager;
         this.modelType = modelType;
     }
 
     @Override
     public List<T> findAll() {
 
-        jpaTransactionManager.beginRead();
-        EntityManager em = jpaTransactionManager.getEm();
+        EntityManager em = transactionManager.getEm();
 
-        try {
             CriteriaQuery<T> criteriaQuery = em.getCriteriaBuilder().createQuery(modelType);
             Root<T> root = criteriaQuery.from(modelType);
             criteriaQuery.select(root);
             return em.createQuery(criteriaQuery).getResultList();
-
-
-        } finally {
-            jpaTransactionManager.commit();
-        }
     }
 
     @Override
     public T findById(Integer id) {
-        EntityManager entityManager = jpaTransactionManager.getEm();
+        EntityManager entityManager = transactionManager.getEm();
         try {
-            jpaTransactionManager.beginRead();
-
-           T find =  entityManager.find(modelType,id);
+            transactionManager.beginRead();
+            T find = entityManager.find(modelType, id);
             return find;
-        }finally {
-            jpaTransactionManager.commit();
+        }catch (RollbackException ex) {
+
+            entityManager.getTransaction().rollback();
         }
+        return null;
     }
 
     @Override
     public T saveOrUpdate(T entity) {
 
-        EntityManager em = jpaTransactionManager.getEm();
+        EntityManager em = transactionManager.getEm();
+
         try {
-            jpaTransactionManager.beginWrite();
-            T newEntity  = em.merge(entity);
-            return newEntity;
+            transactionManager.beginWrite();
+            return  em.merge(entity);
         } catch (RollbackException ex) {
 
             em.getTransaction().rollback();
-
-        } finally {
-            jpaTransactionManager.commit();
         }
-        return null;
+        System.out.println("retunring null ? ");
+     return null;
     }
 
     @Override
@@ -77,11 +66,13 @@ public abstract class AbstractDAO<T extends Model> implements DAO<T> {
 
     }
 
-    public JpaTransactionManager getJpaTransactionManager() {
-        return jpaTransactionManager;
+    public void close(){
+        transactionManager.getEm().close();
+        transactionManager.commit();
     }
 
-    public void setJpaTransactionManager(JpaTransactionManager jpaTransactionManager) {
-        this.jpaTransactionManager = jpaTransactionManager;
+    public TransactionManager getTM() {
+        return transactionManager;
     }
+
 }

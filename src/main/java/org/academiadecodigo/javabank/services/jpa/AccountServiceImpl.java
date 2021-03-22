@@ -1,61 +1,59 @@
 package org.academiadecodigo.javabank.services.jpa;
 
-import org.academiadecodigo.javabank.model.Model;
 import org.academiadecodigo.javabank.model.account.AbstractAccount;
 import org.academiadecodigo.javabank.model.account.Account;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 import org.academiadecodigo.javabank.persistence.dao.jpa.JpaAccountDao;
-import org.academiadecodigo.javabank.services.AccountService;
 
 import javax.persistence.RollbackException;
 import java.util.Optional;
 
 /**
- * A JPA {@link AccountService} implementation
+ * A JPA {@link org.academiadecodigo.javabank.services.AccountService} implementation
  */
-public class JpaAccountService implements AccountService {
+public class AccountServiceImpl implements org.academiadecodigo.javabank.services.AccountService {
 
-   private JpaAccountDao jpaAccountDao;
+   private DAO<AbstractAccount> accountDAO;
 
 
     /**
-     * @see AccountService#deposit(Integer, double)
+     * @see org.academiadecodigo.javabank.services.AccountService#deposit(Integer, double)
      */
     @Override
     public void deposit(Integer id, double amount) {
-
-
         try {
-            Optional<Account> account = Optional.ofNullable(jpaAccountDao.findById(id));
+            Optional<Account> account = Optional.ofNullable(accountDAO.findById(id));
             System.out.println("axxount: "+account);
             if (!account.isPresent()) {
-                jpaAccountDao.getJpaTransactionManager().rollback();
+                accountDAO.getTM().rollback();
             }
             System.out.println("account: "+account);
 
             account.orElseThrow(() -> new IllegalArgumentException("invalid account id")).credit(amount);
             save(account.get());
+            accountDAO.close();
 
         } catch (RollbackException ex) {
-
-            jpaAccountDao.getJpaTransactionManager().rollback();
-
+            accountDAO.getTM().rollback();
+        }
+        finally{
+            accountDAO.close();
         }
     }
 
     /**
-     * @see AccountService#withdraw(Integer, double)
+     * @see org.academiadecodigo.javabank.services.AccountService#withdraw(Integer, double)
      */
     @Override
     public void withdraw(Integer id, double amount) {
 
         try {
 
-            Optional<Account> account = Optional.ofNullable(jpaAccountDao.findById(id));
+            Optional<Account> account = Optional.ofNullable(accountDAO.findById(id));
 
             if (!account.isPresent()) {
-                jpaAccountDao.getJpaTransactionManager().rollback();
+                accountDAO.getTM().rollback();
             }
-
             account.orElseThrow(() -> new IllegalArgumentException("invalid account id")).debit(amount);
             save(account.get());
 
@@ -63,24 +61,25 @@ public class JpaAccountService implements AccountService {
 
         } catch (RollbackException ex) {
 
-            jpaAccountDao.getJpaTransactionManager().rollback();
+            accountDAO.getTM().rollback();
+        }
+        finally{
+            accountDAO.close();
         }
     }
 
     /**
-     * @see AccountService#transfer(Integer, Integer, double)
+     * @see org.academiadecodigo.javabank.services.AccountService#transfer(Integer, Integer, double)
      */
     @Override
     public void transfer(Integer srcId, Integer dstId, double amount) {
 
-
-
         try {
-            Optional<Account> srcAccount = Optional.ofNullable(jpaAccountDao.findById(srcId));
-            Optional<Account> dstAccount = Optional.ofNullable(jpaAccountDao.findById(dstId));
+            Optional<Account> srcAccount = Optional.ofNullable(accountDAO.findById(srcId));
+            Optional<Account> dstAccount = Optional.ofNullable(accountDAO.findById(dstId));
 
             if (!srcAccount.isPresent() || !dstAccount.isPresent()) {
-                jpaAccountDao.getJpaTransactionManager().rollback();
+                accountDAO.getTM().rollback();
             }
 
             srcAccount.orElseThrow(() -> new IllegalArgumentException("invalid account id"));
@@ -94,17 +93,27 @@ public class JpaAccountService implements AccountService {
 
         } catch (RollbackException ex) {
 
-            jpaAccountDao.getJpaTransactionManager().rollback();
+            accountDAO.getTM().rollback();
+        }
+        finally{
+            accountDAO.close();
         }
     }
 
     @Override
     public Account save(Account account) {
-        return jpaAccountDao.saveOrUpdate((AbstractAccount) account);
+        System.out.println("saving");
+        Account savedAccount = accountDAO.saveOrUpdate((AbstractAccount) account);
+        System.out.println("afterSaving");
+        accountDAO.close();
+        return savedAccount;
 
     }
 
-    public void setJpaAccountDao(JpaAccountDao jpaAccountDao) {
-        this.jpaAccountDao = jpaAccountDao;
+    @Override
+    public void setAccountDAO(DAO<AbstractAccount> accountDAO) {
+        this.accountDAO = accountDAO;
     }
-}
+
+    }
+

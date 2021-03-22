@@ -2,15 +2,14 @@ package org.academiadecodigo.javabank.persistence.dao.jpa;
 
 import org.academiadecodigo.javabank.model.Customer;
 import org.academiadecodigo.javabank.persistence.jpa.JpaTransactionManager;
-
-import javax.persistence.EntityManagerFactory;
+import org.academiadecodigo.javabank.session.TransactionManager;
 
 public class JpaCustomerDao extends AbstractDAO<Customer> {
 
-    JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+    TransactionManager jpaTransactionManager = new JpaTransactionManager();
 
-    public JpaCustomerDao(EntityManagerFactory emf) {
-        super(Customer.class);
+    public JpaCustomerDao(TransactionManager transactionManager) {
+        super(Customer.class, transactionManager);
     }
 
     public Customer findByUsername(String username) {
@@ -23,4 +22,8 @@ public class JpaCustomerDao extends AbstractDAO<Customer> {
         return  jpaTransactionManager.getEm().find(Customer.class, email);
     }
 
+    @Override
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.jpaTransactionManager = transactionManager;
+    }
 }

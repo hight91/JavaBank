@@ -1,6 +1,8 @@
 package org.academiadecodigo.javabank.services;
 
 import org.academiadecodigo.javabank.model.Customer;
+import org.academiadecodigo.javabank.model.account.AbstractAccount;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 
 import java.util.Set;
 
@@ -24,5 +26,7 @@ public interface CustomerService{
      * @return the accounts of the given customer id
      */
     Set<Integer> listCustomerAccountIds(Integer id);
+
+    void setCustomerDAO(DAO<Customer> customerDAO);
 
 }

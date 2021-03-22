@@ -1,6 +1,8 @@
 package org.academiadecodigo.javabank.services;
 
+import org.academiadecodigo.javabank.model.account.AbstractAccount;
 import org.academiadecodigo.javabank.model.account.Account;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 
 /**
  * Common interface for account services, provides methods to manage accounts and perform account transactions
@@ -33,5 +35,6 @@ public interface AccountService{
     void transfer(Integer srcId, Integer dstId, double amount);
 
     Account save(Account account);
+    void setAccountDAO(DAO<AbstractAccount> accountDAO);
 
 }

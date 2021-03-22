@@ -2,6 +2,7 @@ package org.academiadecodigo.javabank.services.mock;
 
 import org.academiadecodigo.javabank.model.Customer;
 import org.academiadecodigo.javabank.model.account.Account;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 import org.academiadecodigo.javabank.services.CustomerService;
 
 import java.util.List;
@@ -37,5 +38,10 @@ public class MockCustomerService extends AbstractMockService<Customer> implement
         return accounts.stream()
                 .map(Account::getId)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void setCustomerDAO(DAO<Customer> customerDAO) {
+
     }
 }

@@ -5,11 +5,24 @@ import org.academiadecodigo.javabank.controller.*;
 import org.academiadecodigo.javabank.controller.transaction.DepositController;
 import org.academiadecodigo.javabank.controller.transaction.WithdrawalController;
 import org.academiadecodigo.javabank.factories.AccountFactory;
+import org.academiadecodigo.javabank.model.Customer;
+import org.academiadecodigo.javabank.model.account.AbstractAccount;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
+import org.academiadecodigo.javabank.persistence.dao.jpa.JpaAccountDao;
+import org.academiadecodigo.javabank.persistence.dao.jpa.JpaCustomerDao;
+import org.academiadecodigo.javabank.persistence.jpa.JpaSessionManager;
+import org.academiadecodigo.javabank.persistence.jpa.JpaTransactionManager;
 import org.academiadecodigo.javabank.services.AccountService;
+import org.academiadecodigo.javabank.services.AuthService;
 import org.academiadecodigo.javabank.services.AuthServiceImpl;
 import org.academiadecodigo.javabank.services.CustomerService;
+import org.academiadecodigo.javabank.services.jpa.AccountServiceImpl;
+import org.academiadecodigo.javabank.services.jpa.CustomerServiceImpl;
+import org.academiadecodigo.javabank.session.SessionManager;
+import org.academiadecodigo.javabank.session.TransactionManager;
 import org.academiadecodigo.javabank.view.*;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,17 +31,16 @@ import java.util.Map;
  */
 public class Bootstrap {
 
-    private AuthServiceImpl authService;
+    private AuthService authService;
     private CustomerService customerService;
     private AccountService accountService;
-
 
     /**
      * Sets the authentication service
      *
      * @param authService the authentication service to set
      */
-    public void setAuthService(AuthServiceImpl authService) {
+    public void setAuthService(AuthService authService) {
         this.authService = authService;
     }
 
@@ -55,13 +67,42 @@ public class Bootstrap {
      *
      * @return the login controller
      */
-    public Controller wireObjects() {
+    public Controller wireObjects(EntityManagerFactory emf) {
+
+
+
+        SessionManager sm = new JpaSessionManager();
+        sm.setEmf(emf);
+        TransactionManager tm = new JpaTransactionManager();
+        tm.setSm(sm);
+        AuthService authService = new AuthServiceImpl();
+        CustomerService customerService = new CustomerServiceImpl();
+        AccountService accountService = new AccountServiceImpl();
+        DAO<AbstractAccount> accountDao = new JpaAccountDao(tm);
+        DAO<Customer> customerDAO = new JpaCustomerDao(tm);
+
+        //SETTERS
+
+        accountDao.setTransactionManager(tm);
+        customerDAO.setTransactionManager(tm);
+
+        setAuthService(authService);
+
+        setAccountService(accountService);
+        setCustomerService(customerService);
+        authService.setCustomerDao(customerDAO);
+        accountService.setAccountDAO(accountDao);
+        customerService.setCustomerDAO(customerDAO);
+
+
+
 
         // attach all input to standard i/o
         Prompt prompt = new Prompt(System.in, System.out);
 
         // wire services
         authService.setCustomerService(customerService);
+
 
         // wire login controller and view
         LoginController loginController = new LoginController();

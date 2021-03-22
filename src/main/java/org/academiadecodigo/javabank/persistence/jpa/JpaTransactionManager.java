@@ -1,13 +1,13 @@
 package org.academiadecodigo.javabank.persistence.jpa;
 
-import org.academiadecodigo.javabank.persistence.jpa.JpaSessionManager;
-import org.academiadecodigo.javabank.session.TrasactionManager;
+import org.academiadecodigo.javabank.session.SessionManager;
+import org.academiadecodigo.javabank.session.TransactionManager;
 
 import javax.persistence.EntityManager;
 
-public class JpaTransactionManager implements TrasactionManager {
+public class JpaTransactionManager implements TransactionManager {
 
-    private JpaSessionManager sm;
+    private SessionManager sm;
 
     @Override
     public void beginRead() {
@@ -16,15 +16,22 @@ public class JpaTransactionManager implements TrasactionManager {
 
     @Override
     public void beginWrite() {
-        sm.getCurrentSession().getTransaction().begin();
+        if(!(sm.getCurrentSession().getTransaction().isActive()) ){
+            System.out.println("TRANSACTION IS CLOSED");
+            sm.getCurrentSession().getTransaction().begin();
+            return;
+        }
+        System.out.println(" TRANSACTION IS OPEN");
     }
 
     @Override
     public void commit() {
 
         if (sm.getCurrentSession().getTransaction().isActive()) {
+            System.out.println("seesion active:");
             sm.getCurrentSession().getTransaction().commit();
         }
+        System.out.println("stoping ssession");
         sm.stopSession();
     }
 
@@ -41,7 +48,13 @@ public class JpaTransactionManager implements TrasactionManager {
         return sm.getCurrentSession();
     }
 
-    public void setSm(JpaSessionManager sm) {
+
+    public void setSm(SessionManager sm) {
         this.sm = sm;
+    }
+
+    @Override
+    public SessionManager getSm() {
+        return sm;
     }
 }

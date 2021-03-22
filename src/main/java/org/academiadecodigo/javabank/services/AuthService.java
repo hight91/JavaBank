@@ -1,6 +1,7 @@
 package org.academiadecodigo.javabank.services;
 
 import org.academiadecodigo.javabank.model.Customer;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 
 /**
  * Common interface for authentication services, provides method
@@ -22,4 +23,6 @@ public interface AuthService {
      * @return the customer
      */
     Customer getAccessingCustomer();
+    void setCustomerDao(DAO<Customer> customerDao);
+    void setCustomerService(CustomerService customerService);
 }

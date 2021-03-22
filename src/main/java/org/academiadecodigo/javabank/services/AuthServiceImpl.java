@@ -1,7 +1,7 @@
 package org.academiadecodigo.javabank.services;
 
 import org.academiadecodigo.javabank.model.Customer;
-import org.academiadecodigo.javabank.persistence.dao.jpa.JpaCustomerDao;
+import org.academiadecodigo.javabank.persistence.dao.jpa.DAO;
 
 import java.util.Optional;
 
@@ -10,16 +10,14 @@ import java.util.Optional;
  */
 public class AuthServiceImpl implements AuthService {
 
-    private CustomerService customerService;
     private Integer accessingCustomerId;
-    private JpaCustomerDao jpaCustomerDao;
+    private DAO<Customer> customerDAO;
     /**
      * Sets the customer service
      *
      * @param customerService the customer service to set
      */
     public void setCustomerService(CustomerService customerService) {
-        this.customerService = customerService;
     }
 
     /**
@@ -28,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean authenticate(Integer id) {
 
-        Optional<Customer> customer = Optional.ofNullable(jpaCustomerDao.findById(id));
+        Optional<Customer> customer = Optional.ofNullable(customerDAO.findById(id));
 
         customer.ifPresent(customer1 -> accessingCustomerId = customer1.getId());
 
@@ -41,10 +39,11 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public Customer getAccessingCustomer() {
-        return jpaCustomerDao.findById(accessingCustomerId);
+        return customerDAO.findById(accessingCustomerId);
     }
 
-    public void setJpaCustomerDao(JpaCustomerDao jpaCustomerDao) {
-        this.jpaCustomerDao = jpaCustomerDao;
+    @Override
+    public void setCustomerDao(DAO<Customer> customerDAO) {
+        this.customerDAO = customerDAO;
     }
 }
