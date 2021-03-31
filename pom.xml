@@ -140,6 +140,8 @@
                     <url>http://localhost:8080/manager/text</url>
                     <server>tomcat</server>
                     <path>/javabank1</path>
+                    <username>user</username>
+                    <password>password</password>
                 </configuration>
             </plugin>
 

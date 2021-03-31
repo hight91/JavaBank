@@ -21,6 +21,9 @@
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Show</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
             <tr th:each="customer : ${customers}">
                 <td th:text="${customer.id}"></td>
@@ -28,10 +31,29 @@
                 <td th:text="${customer.lastName}"></td>
                 <td th:text="${customer.email}"></td>
                 <td th:text="${customer.phone}"></td>
+                <td>
+                    <a th:href="@{/customer/id(id=${customer.id})}">
+                        <button type="button" class="btn btn-primary">Show</button>
+                    </a>
+
+                </td>
+                <td>
+                    <a th:href="@{/customer/edit(id=${customer.id})}">
+                        <button type="button" class="btn btn-warning">Edit</button>
+                    </a>
+                </td>
+                <td>
+                    <a th:href="@{/customer/delete/{id}(id=${customer.id})}" >
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    </a>
+                </td>
+
             </tr>
         </table>
     </div>
 </div>
+<div class="col-sm-3">
+    <a class="btn btn-primary" th:href="@{/customer/add}">New Customer</a>
+</div>
 </body>
 </html>
-
