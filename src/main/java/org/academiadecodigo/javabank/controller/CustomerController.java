@@ -1,11 +1,11 @@
 package org.academiadecodigo.javabank.controller;
 
 import org.academiadecodigo.javabank.converters.AccountDTO;
+import org.academiadecodigo.javabank.converters.Converter;
 import org.academiadecodigo.javabank.converters.CustomerDTO;
 import org.academiadecodigo.javabank.persistence.model.Customer;
 import org.academiadecodigo.javabank.persistence.model.account.Account;
 import org.academiadecodigo.javabank.services.CustomerService;
-import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +22,7 @@ import java.util.List;
 public class CustomerController {
 
     private CustomerService customerService;
+    private Converter converter;
 
     /**
      * Sets the customer service
@@ -32,6 +33,10 @@ public class CustomerController {
     public void setCustomerService(CustomerService customerService) {
         this.customerService = customerService;
     }
+    @Autowired
+    public void setConverter(Converter converter) {
+        this.converter = converter;
+    }
 
     /**
      * Renders a view with a list of customers
@@ -41,11 +46,8 @@ public class CustomerController {
      */
     @RequestMapping(method = RequestMethod.GET, path = {"/list", "/", ""})
     public String listCustomers(Model model) {
-        List<CustomerDTO> listDTO = new LinkedList<>();
-        for (Customer customer : customerService.list()) {
-            listDTO.add(getCustomers(customer));
-        }
-        model.addAttribute("customers", listDTO);
+
+        model.addAttribute("customers", converter.getCustomerDTOList());
 
         return "customer/list";
     }
@@ -53,22 +55,17 @@ public class CustomerController {
     // Can serve URLs like http://www.someserver.org/someapp/hello?name=catarina
     @RequestMapping(method = RequestMethod.GET, value = "/id")
     public String customerShow(Model model, @RequestParam("id") Integer id) {
-        Customer customer = customerService.get(id);
-        CustomerDTO customerDTO = getCustomers(customer);
-        List<AccountDTO> listDTO = new LinkedList<>();
-        for (Account account : customer.getAccounts()) {
-            listDTO.add(getAccounts(account));
+        CustomerDTO customerDTO = converter.getCustomerDTO(id);
 
-        }
         model.addAttribute("customer", customerDTO);
-        model.addAttribute("accounts", listDTO);
+        model.addAttribute("accounts", converter.getAccountrDTOList(id));
         model.addAttribute("balance", customerService.getBalance(id));
         return "customer/id";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
     public String editCustomer(Model model, @RequestParam("id") Integer id) {
-        Customer customer = customerService.get(id);
-        CustomerDTO customerDTO = getCustomers(customer);
+
+        CustomerDTO customerDTO = converter.getCustomerDTO(id);
         model.addAttribute("customer", customerDTO);
         return "customer/edit";
     }
@@ -104,22 +101,5 @@ public class CustomerController {
         return "redirect:/";
     }
 
-
-    private CustomerDTO getCustomers(Customer customer){
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customer.getId());
-        customerDTO.setFirstName(customer.getFirstName());
-        customerDTO.setLastName(customer.getLastName());
-        customerDTO.setEmail(customer.getEmail());
-        customerDTO.setPhone(customer.getPhone());
-        return customerDTO;
-    }
-    private AccountDTO getAccounts(Account account){
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(account.getId());
-        accountDTO.setBalance(account.getBalance());
-        accountDTO.setAccountType(account.getAccountType());
-        return accountDTO;
-    }
 
 }
