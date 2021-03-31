@@ -9,10 +9,7 @@ import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,9 +57,10 @@ public class CustomerController {
         List<AccountDTO> listDTO = new LinkedList<>();
         for (Account account : customer.getAccounts()) {
             listDTO.add(getAccounts(account));
+
         }
         model.addAttribute("customer", customerDTO);
-        model.addAttribute("accounts", customerDTO.getAccounts());
+        model.addAttribute("accounts", listDTO);
         return "customer/id";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
@@ -80,16 +78,14 @@ public class CustomerController {
 
 
     @RequestMapping(method = RequestMethod.GET, value = "/add")
-    public String addCustomer() {
-        return "customer/addAccount";
+    public String addCustomer(Model model) {
+        model.addAttribute("customer", new CustomerDTO());
+        return "customer/edit";
     }
 
     @RequestMapping(method = RequestMethod.POST, path = {"/submit", "/submit/{id}"})
-    public String submitCustomer(@PathVariable(required = false) Integer id ,
-                                 @RequestParam("firstName") String firstName,
-                                 @RequestParam("lastName") String lastName,
-                                 @RequestParam("email") String email,
-                                 @RequestParam("phone") String phone) {
+    public String submitCustomer(@PathVariable(required = false) Integer id ,@ModelAttribute CustomerDTO customerDto)
+    {
         Customer user;
 
         if(id == null){
@@ -98,10 +94,10 @@ public class CustomerController {
         else{
             user = customerService.get(id);
         }
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPhone(phone);
+        user.setFirstName(customerDto.getFirstName());
+        user.setLastName(customerDto.getLastName());
+        user.setEmail(customerDto.getEmail());
+        user.setPhone(customerDto.getPhone());
         customerService.add(user);
         return "redirect:/";
     }
@@ -118,7 +114,6 @@ public class CustomerController {
     }
     private AccountDTO getAccounts(Account account){
         AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(account.getId());
         accountDTO.setId(account.getId());
         accountDTO.setBalance(account.getBalance());
         accountDTO.setAccountType(account.getAccountType());
