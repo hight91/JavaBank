@@ -43,7 +43,8 @@
                     </a>
                 </td>
                 <td>
-                    <a th:href="@{/customer/delete/{id}(id=${customer.id})}" >
+                    <!--<a th:href="@{/customer/delete/{id}(id=${customer.id})}" >-->
+                    <a th:href="@{'/customer/delete/' + ${customer.id}}" >
                         <button type="button" class="btn btn-danger">Delete</button>
                     </a>
                 </td>

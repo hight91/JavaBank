@@ -46,6 +46,7 @@ public class CustomerController {
             listDTO.add(getCustomers(customer));
         }
         model.addAttribute("customers", listDTO);
+
         return "customer/list";
     }
 
@@ -61,6 +62,7 @@ public class CustomerController {
         }
         model.addAttribute("customer", customerDTO);
         model.addAttribute("accounts", listDTO);
+        model.addAttribute("balance", customerService.getBalance(id));
         return "customer/id";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
@@ -73,7 +75,7 @@ public class CustomerController {
     @RequestMapping(method = RequestMethod.GET, path = "delete/{id}")
     public String deleteCustomer(@PathVariable Integer id) {
         customerService.delete(id);
-        return "redirect:/list";
+        return "redirect:/";
     }
 
 
