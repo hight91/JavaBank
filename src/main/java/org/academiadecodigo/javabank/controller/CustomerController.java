@@ -1,16 +1,21 @@
 package org.academiadecodigo.javabank.controller;
 
+import org.academiadecodigo.javabank.converters.AccountDTO;
+import org.academiadecodigo.javabank.converters.CustomerDTO;
 import org.academiadecodigo.javabank.persistence.model.Customer;
+import org.academiadecodigo.javabank.persistence.model.account.Account;
 import org.academiadecodigo.javabank.services.CustomerService;
+import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Controller responsible for rendering {@link Customer} related views
@@ -39,23 +44,32 @@ public class CustomerController {
      */
     @RequestMapping(method = RequestMethod.GET, path = {"/list", "/", ""})
     public String listCustomers(Model model) {
-        model.addAttribute("customers", customerService.list());
+        List<CustomerDTO> listDTO = new LinkedList<>();
+        for (Customer customer : customerService.list()) {
+            listDTO.add(getCustomers(customer));
+        }
+        model.addAttribute("customers", listDTO);
         return "customer/list";
     }
 
     // Can serve URLs like http://www.someserver.org/someapp/hello?name=catarina
     @RequestMapping(method = RequestMethod.GET, value = "/id")
     public String customerShow(Model model, @RequestParam("id") Integer id) {
-        Customer user = customerService.get(id);
-        model.addAttribute("customer", user);
-        model.addAttribute("accounts", user.getAccounts());
-        model.addAttribute("balance",customerService.getBalance(id));
+        Customer customer = customerService.get(id);
+        CustomerDTO customerDTO = getCustomers(customer);
+        List<AccountDTO> listDTO = new LinkedList<>();
+        for (Account account : customer.getAccounts()) {
+            listDTO.add(getAccounts(account));
+        }
+        model.addAttribute("customer", customerDTO);
+        model.addAttribute("accounts", customerDTO.getAccounts());
         return "customer/id";
     }
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
     public String editCustomer(Model model, @RequestParam("id") Integer id) {
-        Customer user = customerService.get(id);
-        model.addAttribute("customer", user);
+        Customer customer = customerService.get(id);
+        CustomerDTO customerDTO = getCustomers(customer);
+        model.addAttribute("customer", customerDTO);
         return "customer/edit";
     }
     @RequestMapping(method = RequestMethod.GET, path = "delete/{id}")
@@ -93,9 +107,22 @@ public class CustomerController {
     }
 
 
-
-
-
-
+    private CustomerDTO getCustomers(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customer.getId());
+        customerDTO.setFirstName(customer.getFirstName());
+        customerDTO.setLastName(customer.getLastName());
+        customerDTO.setEmail(customer.getEmail());
+        customerDTO.setPhone(customer.getPhone());
+        return customerDTO;
+    }
+    private AccountDTO getAccounts(Account account){
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(account.getId());
+        accountDTO.setId(account.getId());
+        accountDTO.setBalance(account.getBalance());
+        accountDTO.setAccountType(account.getAccountType());
+        return accountDTO;
+    }
 
 }
