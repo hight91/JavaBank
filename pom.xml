@@ -20,7 +20,12 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- JSR-301/3 validation -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.2.Final</version>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>

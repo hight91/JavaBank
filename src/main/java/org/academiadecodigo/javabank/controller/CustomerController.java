@@ -9,8 +9,10 @@ import org.academiadecodigo.javabank.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,8 +85,12 @@ public class CustomerController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = {"/submit", "/submit/{id}"})
-    public String submitCustomer(@PathVariable(required = false) Integer id ,@ModelAttribute CustomerDTO customerDto)
+    public String submitCustomer(@PathVariable(required = false) Integer id ,@Valid @ModelAttribute("customer") CustomerDTO customerDto, BindingResult bindingResult)
     {
+        if (bindingResult.hasErrors()) {
+            System.out.println("\n\n\nERROR\n\n\n");
+            return "customer/edit";
+        }
         Customer user;
 
         if(id == null){
@@ -98,8 +104,11 @@ public class CustomerController {
         user.setEmail(customerDto.getEmail());
         user.setPhone(customerDto.getPhone());
         customerService.add(user);
+
         return "redirect:/";
     }
+
+
 
 
 }
